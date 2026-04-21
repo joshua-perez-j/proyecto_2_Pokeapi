@@ -13,15 +13,20 @@ const pokemonInput = document.getElementById('pokemon-input');
 const resultContainer = document.getElementById('pokemon-result');
 const catalogContainer = document.getElementById('catalog-container');
 const catalogSection = document.getElementById('catalog-section');
-
 const prevPageBtn = document.getElementById('prev-page-btn');
 const nextPageBtn = document.getElementById('next-page-btn');
+const typeFilter = document.getElementById('type-filter');
+const genFilter = document.getElementById('gen-filter');
+const applyFiltersBtn = document.getElementById('apply-filters-btn');
 
 const errorSound = new Audio('FAHH.mp3');
 let myTeam = [];
-
 let nextUrl = null;
 let prevUrl = null;
+
+let isFiltered = false;
+let filteredData = [];
+let filterPage = 0;
 
 const switchTab = (tab) => {
     document.getElementById('home-tab').style.display = tab === 'home' ? 'block' : 'none';
@@ -31,9 +36,122 @@ const switchTab = (tab) => {
     }
 };
 
+const loadFilterOptions = async () => {
+    try {
+        const typeRes = await fetch('https://pokeapi.co/api/v2/type');
+        const typeData = await typeRes.json();
+        typeData.results.forEach(t => {
+            typeFilter.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+        });
+
+        const genRes = await fetch('https://pokeapi.co/api/v2/generation');
+        const genData = await genRes.json();
+        genData.results.forEach(g => {
+            genFilter.innerHTML += `<option value="${g.name}">${g.name}</option>`;
+        });
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const applyFilters = async () => {
+    const type = typeFilter.value;
+    const gen = genFilter.value;
+
+    if (!type && !gen) {
+        isFiltered = false;
+        loadCatalog();
+        return;
+    }
+
+    catalogContainer.innerHTML = '<p>Aplicando filtros...</p>';
+    isFiltered = true;
+    filterPage = 0;
+
+    try {
+        let typeNames = null;
+        let genNames = null;
+
+        if (type) {
+            const res = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
+            const data = await res.json();
+            typeNames = data.pokemon.map(p => p.pokemon.name);
+        }
+
+        if (gen) {
+            const res = await fetch(`https://pokeapi.co/api/v2/generation/${gen}`);
+            const data = await res.json();
+            genNames = data.pokemon_species.map(p => p.name);
+        }
+
+        let finalNames = [];
+        if (typeNames && genNames) {
+            finalNames = typeNames.filter(n => genNames.includes(n));
+        } else if (typeNames) {
+            finalNames = typeNames;
+        } else {
+            finalNames = genNames;
+        }
+
+        filteredData = finalNames.map(name => ({
+            name,
+            url: `https://pokeapi.co/api/v2/pokemon/${name}`
+        }));
+
+        renderFilterPage();
+    } catch (error) {
+        catalogContainer.innerHTML = '<p class="error-msg">Error al aplicar los filtros.</p>';
+        console.error(error);
+    }
+};
+
+const renderFilterPage = async () => {
+    catalogContainer.innerHTML = '<p>Cargando resultados...</p>';
+    const start = filterPage * 20;
+    const end = start + 20;
+    const pageData = filteredData.slice(start, end);
+
+    if (pageData.length === 0) {
+        catalogContainer.innerHTML = '<p>No se encontraron Pokémon con esos filtros.</p>';
+        prevPageBtn.disabled = true;
+        nextPageBtn.disabled = true;
+        return;
+    }
+
+    try {
+        const promises = pageData.map(p => fetch(p.url).then(r => r.json()).catch(() => null));
+        const pokemonDataList = (await Promise.all(promises)).filter(p => p !== null);
+
+        catalogContainer.innerHTML = '';
+        
+        for (let pData of pokemonDataList) {
+            const card = document.createElement('div');
+            card.className = 'mini-card';
+            card.innerHTML = `
+                <img src="${pData.sprites.front_default || ''}" alt="${pData.name}">
+                <h4 style="text-transform: capitalize; margin: 5px 0;">#${pData.id} ${pData.name}</h4>
+            `;
+            card.onclick = () => {
+                pokemonInput.value = pData.name;
+                fetchPokemon();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+            catalogContainer.appendChild(card);
+        }
+
+        prevPageBtn.disabled = filterPage === 0;
+        nextPageBtn.disabled = end >= filteredData.length;
+
+    } catch (error) {
+        catalogContainer.innerHTML = '<p class="error-msg">Error al cargar la página filtrada.</p>';
+        console.error(error);
+    }
+};
+
 const loadCatalog = async (url = 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0') => {
     if (!catalogContainer) return;
 
+    isFiltered = false;
     catalogContainer.innerHTML = '<p>Cargando catálogo...</p>';
     
     if (prevPageBtn) prevPageBtn.disabled = true;
@@ -172,8 +290,8 @@ const renderPokemon = (data, evolutions) => {
                 <div><strong>5. Exp. Base:</strong><br> ${base_experience}</div>
                 <div><strong>6. Stats Base:</strong><br> ${totalStats} pts totales</div>
             </div>
-            <div style="background: #f9f9f9; padding: 8px; border-radius: 4px; border: 1px solid #eee;">
-                <strong>7. Evoluciones:</strong> <small>${evolutions}</small>
+            <div style="background: #f9f9f9; padding: 18px; margin-top: 20px; border-radius: 12px; border: 1px solid #eee;">
+                <strong>7. Evoluciones:</strong> <br> <div style="margin-top: 10px;"><span class="badge" style="background: #2d3436;">${evolutions}</span></div>
             </div>
 
             <h3 class="section-title">Apartado de Movimientos e Ítems</h3>
@@ -247,18 +365,37 @@ if(clearBtn) {
     });
 }
 
+if(applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', applyFilters);
+}
+
 const initApp = () => {
     if(prevPageBtn) {
         prevPageBtn.addEventListener('click', () => {
-            if (prevUrl) loadCatalog(prevUrl);
+            if (isFiltered) {
+                if (filterPage > 0) {
+                    filterPage--;
+                    renderFilterPage();
+                }
+            } else {
+                if (prevUrl) loadCatalog(prevUrl);
+            }
         });
     }
     if(nextPageBtn) {
         nextPageBtn.addEventListener('click', () => {
-            if (nextUrl) loadCatalog(nextUrl);
+            if (isFiltered) {
+                if ((filterPage + 1) * 20 < filteredData.length) {
+                    filterPage++;
+                    renderFilterPage();
+                }
+            } else {
+                if (nextUrl) loadCatalog(nextUrl);
+            }
         });
     }
     
+    loadFilterOptions();
     loadCatalog();
 };
 

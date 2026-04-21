@@ -26,6 +26,17 @@
 
             <div id="catalog-section">
                 <h2 style="margin-top: 30px;">Catálogo</h2>
+                
+                <div class="filters-container">
+                    <select id="type-filter">
+                        <option value="">Todos los Tipos</option>
+                    </select>
+                    <select id="gen-filter">
+                        <option value="">Todas las Generaciones</option>
+                    </select>
+                    <button id="apply-filters-btn">Aplicar Filtros</button>
+                </div>
+
                 <div id="catalog-container" class="grid-container"></div>
                 
                 <div class="pagination-controls" style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
