@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Poke Buscador Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>Iniciar Sesión</h1>
+        <div class="form">
+            <p>Ingresa tus credenciales</p>
+            <input type="text" id="login-user" placeholder="usuario">
+            <input type="password" id="login-pass" placeholder="password">
+            <button id="login-btn">Entrar</button>
+            <p id="login-error" class="error-msg" style="display:none;">Credenciales incorrectas.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+
+            if (user === 'user' && pass === '1234') {
+                sessionStorage.setItem('auth', 'true'); 
+                window.location.href = 'index.html';    
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

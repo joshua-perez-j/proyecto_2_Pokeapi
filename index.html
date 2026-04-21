@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poke Buscador Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container" style="max-width: 800px;">
+        <nav class="nav-bar">
+            <button onclick="switchTab('home')">Catálogo / Buscar</button>
+            <button onclick="switchTab('team')" class="btn-success">Mi Equipo (<span id="team-count">0</span>/6)</button>
+            <button onclick="logout()" style="background-color: #555;">Salir</button>
+        </nav>
+
+        <div id="home-tab">
+            <h1>Buscador Pokemon</h1>
+            <div class="form">
+                <input type="text" id="pokemon-input" placeholder="Nombre o número del Pokémon...">
+                <button id="search-btn">Buscar Pokemon</button>
+                <button id="clear-btn" style="background-color: #9e9e9e; display: none;">Limpiar Búsqueda</button>
+            </div>
+            <div id="pokemon-result"></div>
+
+            <div id="catalog-section">
+                <h2 style="margin-top: 30px;">Catálogo</h2>
+                <div id="catalog-container" class="grid-container"></div>
+                
+                <div class="pagination-controls" style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
+                    <button id="prev-page-btn" disabled>&larr; Anterior</button>
+                    <button id="next-page-btn" disabled>Siguiente &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="team-tab" style="display:none;">
+            <h1>Mi Equipo Pokémon</h1>
+            <p>Gestiona tu equipo de hasta 6 integrantes para la batalla.</p>
+            <div id="team-grid" class="grid-container">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+:root {
+    --primary-red: #ff1f1f;
+    --dark-red: #cc0000;
+    --pokemon-blue: #3b4cca;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --glass: rgba(255, 255, 255, 0.8);
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center; 
+    padding: 25px;
+    margin: 0;
+    color: #2d3436;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 800px; 
+    margin: 0 auto;
+}
+
+.nav-bar {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 25px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.nav-bar button {
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.form {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row; 
+    gap: 12px; 
+    align-items: center; 
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+}
+
+input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 4px rgba(255, 31, 31, 0.1);
+}
+
+button {
+    padding: 12px;
+    background: linear-gradient(135deg, #ff1f1f 0%, #d32f2f 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+}
+
+.movie-card {
+    background: white;
+    margin-top: 20px;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.movie-card img.main-img {
+    width: 200px; 
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    margin-bottom: 20px;
+}
+
+.badge {
+    background: #444;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.mini-card {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #f0f0f0;
+}
+
+.mini-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow);
+    border-color: var(--primary-red);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.details-grid div {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #edf2f7;
+    font-weight: 500;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #1a202c;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title::after {
+    content: "";
+    flex: 1;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-red), transparent);
+    border-radius: 3px;
+}
+
+.btn-success { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3); }
+.btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.btn-danger:hover { background: #fecaca; }
+
+.error-msg {
+    background: #fff5f5;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 4px solid #f56565;
+}
